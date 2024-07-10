@@ -12,5 +12,5 @@ public class App : BaseEntity
 
     public ApplicationUser User { get; set; }
     [ForeignKey("User")]
-    public string UserId { get; set; }
+    public Guid UserId { get; set; }
 }

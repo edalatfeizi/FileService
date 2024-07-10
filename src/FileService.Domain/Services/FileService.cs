@@ -12,8 +12,8 @@ public class FileService : IFilesService
     {
         this.fileRepo = fileRepository;
     }
-    public Task<ApiResponse<List<FileResDto>>> UploadFiles(string apiKey, List<IFormFile> files)
-    {
+    //public Task<ApiResponse<List<FileResDto>>> UploadFiles(string apiKey, List<IFormFile> files)
+    //{
         
-    }
+    //}
 }

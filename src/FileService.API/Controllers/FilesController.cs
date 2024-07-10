@@ -7,10 +7,10 @@ namespace FileService.API.Controllers
     [ApiController]
     public class FilesController : ControllerBase
     {
-        private readonly IFilesService filesService;
-        public FilesController(IFilesService filesService)
-        {
-            this.filesService = filesService;
-        }
+        //private readonly IFilesService filesService;
+        //public FilesController(IFilesService filesService)
+        //{
+        //    this.filesService = filesService;
+        //}
     }
 }
