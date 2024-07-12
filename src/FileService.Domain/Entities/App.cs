@@ -13,4 +13,6 @@ public class App : BaseEntity
     public ApplicationUser User { get; set; }
     [ForeignKey("User")]
     public Guid UserId { get; set; }
+
+    public virtual ICollection<Folder> Folders { get; set; }
 }

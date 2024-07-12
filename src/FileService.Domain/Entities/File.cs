@@ -10,5 +10,5 @@ public class File : BaseEntity
 
     public Folder Folder { get; set; }
     [ForeignKey("Folder")]
-    public int ParentFolderId { get; set; }
+    public int? ParentFolderId { get; set; }
 }

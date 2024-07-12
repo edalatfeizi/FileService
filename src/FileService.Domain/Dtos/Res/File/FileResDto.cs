@@ -1,5 +1,4 @@
-﻿
-namespace FileService.Domain.Dtos.Res;
+﻿namespace FileService.Domain.Dtos.Res.File;
 
 public record FileResDto
 {

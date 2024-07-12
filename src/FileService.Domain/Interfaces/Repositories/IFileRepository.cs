@@ -2,5 +2,7 @@
 
 public interface IFileRepository
 {
-    Task<List<Entities.File>> SaveFilesAsync(string appId, List<IFormFile> files);
+    Task<List<Entities.File>?> SaveFilesAsync(string appName, int folderId, List<IFormFile> files);
+    Task<(byte[], string, string)?> DownloadFileAsync(int fileId);
+    Task<(bool, string)?> DeleteFileAsync(int fileId);
 }

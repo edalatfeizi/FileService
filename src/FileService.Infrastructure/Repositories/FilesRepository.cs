@@ -1,5 +1,8 @@
 ﻿
+using FileService.Infrastructure.Common;
 using FileService.Infrastructure.Data;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 
 namespace FileService.Infrastructure.Repositories;
 
@@ -10,8 +13,74 @@ public class FilesRepository : IFileRepository
     {
         this.dbContext = dbContext;
     }
-    public Task<List<Domain.Entities.File>> SaveFilesAsync(string appId, List<IFormFile> files)
+    public async Task<List<Domain.Entities.File>?> SaveFilesAsync(string appName, int folderId, List<IFormFile> files)
     {
-        throw new NotImplementedException();
+
+        var newFiles = new List<Domain.Entities.File>();
+        var folder = await dbContext.Folders.Where(x => x.Id == folderId && x.IsActive).FirstOrDefaultAsync();
+        if (folder == null)
+            return null;
+        foreach (var file in files)
+        {
+
+            var fileInfo = new FileInfo(file.FileName);
+            var fileName = $"{DateTime.UtcNow.Ticks}{fileInfo.Extension}";
+            var filePath = $@"{FileCommons.GetDirectoryPath(appName, folder.Name)}\{fileName}";
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            var newFile = new Domain.Entities.File
+            {
+                Name = file.FileName,
+                ContentType = file.ContentType,
+                Size = file.Length,
+                ParentFolderId = folder!.Id,
+                Folder = folder,
+                Path = filePath
+            };
+            newFiles.Add(newFile);
+        }
+        await dbContext.Files.AddRangeAsync(newFiles);
+        await dbContext.SaveChangesAsync();
+
+        return newFiles;
+    }
+
+    public async Task<(byte[], string, string)?> DownloadFileAsync(int fileId)
+    {
+        var file = await dbContext.Files.FindAsync(fileId);
+        if (file == null) return null;
+        var provider = new FileExtensionContentTypeProvider();
+
+        if (!provider.TryGetContentType(file.Path, out var contentType))
+        {
+            contentType = "application/octet-stream";
+        }
+
+        var fileBytes = await File.ReadAllBytesAsync(file.Path);
+        return (fileBytes, contentType, Path.GetFileName(file.Path));
+
+    }
+
+    public async Task<(bool, string)?> DeleteFileAsync(int fileId)
+    {
+
+        try
+        {
+            var file = await dbContext.Files.Where(x => x.Id == fileId && x.IsActive).FirstOrDefaultAsync();
+            if (file == null)
+                return null;
+            file.IsActive = false;
+            File.Delete(file.Path);
+            await dbContext.SaveChangesAsync();
+            return (true, "");
+        }
+        catch (Exception ex)
+        {
+            return (true, $"An error occurred while deleting file: {ex.Message}");
+        }
+
     }
 }
