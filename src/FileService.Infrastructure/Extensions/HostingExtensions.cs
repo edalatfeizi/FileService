@@ -1,4 +1,5 @@
 ﻿using FileService.Infrastructure.Data;
+using FileService.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +13,9 @@ public static class HostingExtensions
         {
             options.UseSqlServer(connectionString);
         });
-
+        services.AddScoped<IAppsRepository, AppsRepository>();
+        services.AddScoped<IFilesRepository, FilesRepository>();
+        services.AddScoped<IFoldersRepository, FoldersRepository>();
         return services;
     }
 }

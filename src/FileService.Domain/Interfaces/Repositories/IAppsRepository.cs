@@ -2,7 +2,7 @@
 
 namespace FileService.Domain.Interfaces.Repositories;
 
-public interface IAppRepository
+public interface IAppsRepository
 {
     Task<App?> GetAppByApiKeyAsync(string apiKey);
     Task<App?> GetAppByIdAsync(int appId);

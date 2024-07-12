@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FileService.Infrastructure.Repositories;
 
-public class FilesRepository : IFileRepository
+public class FilesRepository : IFilesRepository
 {
     private readonly FileServiceDbContext dbContext;
     public FilesRepository(FileServiceDbContext dbContext)

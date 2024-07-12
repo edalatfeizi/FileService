@@ -8,8 +8,8 @@ namespace FileService.API.Controllers
     [ApiController]
     public class AppsController : ControllerBase
     {
-        private readonly IAppService appService;
-        public AppsController(IAppService appService)
+        private readonly IAppsService appService;
+        public AppsController(IAppsService appService)
         {
             this.appService = appService;
         }

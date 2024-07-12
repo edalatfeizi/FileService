@@ -10,10 +10,10 @@ using System.Net;
 
 namespace FileService.Domain.Services;
 
-public class AppService : IAppService
+public class AppsService : IAppsService
 {
-    private readonly IAppRepository appRepo;
-    public AppService(IAppRepository appRepository)
+    private readonly IAppsRepository appRepo;
+    public AppsService(IAppsRepository appRepository)
     {
         appRepo = appRepository;
     }

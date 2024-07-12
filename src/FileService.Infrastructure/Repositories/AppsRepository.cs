@@ -4,10 +4,10 @@ using FileService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FileService.Infrastructure.Repositories;
-public class AppRepository : IAppRepository
+public class AppsRepository : IAppsRepository
 {
     private readonly FileServiceDbContext dbContext;
-    public AppRepository(FileServiceDbContext dbContext)
+    public AppsRepository(FileServiceDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
@@ -28,8 +28,11 @@ public class AppRepository : IAppRepository
     {
         var app = await dbContext.Apps.Where(x => x.Id == appId && x.IsActive).FirstOrDefaultAsync();
         if (app != null)
+        {
             app.IsActive = false;
-        await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
+        }
+       
         return app;
     }
 
@@ -61,8 +64,11 @@ public class AppRepository : IAppRepository
     {
         var app = await dbContext.Apps.Where(x => x.Id == appId && x.IsActive).FirstOrDefaultAsync();
         if (app != null)
-            app.ApiKey = Guid.NewGuid().ToString().Replace("-","");
-        await dbContext.SaveChangesAsync();
+        {
+            app.ApiKey = Guid.NewGuid().ToString().Replace("-", "");
+            await dbContext.SaveChangesAsync();
+        }
+           
         return app;
     }
 
@@ -73,8 +79,9 @@ public class AppRepository : IAppRepository
         {
             app.Name = name;
             app.Description = description;
+            await dbContext.SaveChangesAsync();
+
         }
-        await dbContext.SaveChangesAsync();
         return app;
     }
 }

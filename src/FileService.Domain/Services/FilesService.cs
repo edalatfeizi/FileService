@@ -7,11 +7,11 @@ using System.Net;
 
 namespace FileService.Domain.Services;
 
-public class FileService : IFilesService
+public class FilesService : IFilesService
 {
-    private IFileRepository fileRepo;
-    private IAppRepository appRepo;
-    public FileService(IFileRepository fileRepository, IAppRepository appRepository)
+    private IFilesRepository fileRepo;
+    private IAppsRepository appRepo;
+    public FilesService(IFilesRepository fileRepository, IAppsRepository appRepository)
     {
         this.fileRepo = fileRepository;
         appRepo = appRepository;

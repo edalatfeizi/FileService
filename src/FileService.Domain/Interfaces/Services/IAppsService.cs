@@ -4,7 +4,7 @@ using FileService.Domain.Dtos.Res.App;
 using FileService.Domain.Dtos.Res.Folder;
 namespace FileService.Domain.Interfaces.Services;
 
-public interface IAppService
+public interface IAppsService
 {
     Task<ApiResponse<AppResDto>> GetAppByApiKeyAsync(string apiKey);
     Task<ApiResponse<AppResDto>> GetAppByIdAsync(int appId);
