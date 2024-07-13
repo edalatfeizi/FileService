@@ -3,7 +3,7 @@ namespace FileService.Domain.Extensions;
 
 public static class FileExtensions
 {
-    public static FileResDto MapToFileResDto(this Entities.File file)
+    public static FileResDto MapToFileResDto(this Entities.AppFile file)
     {
         var fileDto = new FileResDto
         {
@@ -17,7 +17,7 @@ public static class FileExtensions
         return fileDto; 
     }
 
-    public static List<FileResDto> MapToFileResDtos(this List<Entities.File> files)
+    public static List<FileResDto> MapToFileResDtos(this List<Entities.AppFile> files)
     {
         var fileResDtos = new List<FileResDto>();
         foreach (var file in files)

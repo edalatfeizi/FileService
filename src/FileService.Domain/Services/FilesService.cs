@@ -17,9 +17,9 @@ public class FilesService : IFilesService
         appRepo = appRepository;
     }
 
-    public async Task<ApiResponse<DeleteFIleResDto>> DeleteFileAsync(int fileId)
+    public async Task<ApiResponse<DeleteFIleResDto>> DeleteFileAsync(string userId, int fileId)
     {
-        var result = await fileRepo.DeleteFileAsync(fileId);
+        var result = await fileRepo.DeleteFileAsync(userId,fileId);
 
         if (result == null)
             return new ApiResponse<DeleteFIleResDto>((int)HttpStatusCode.NotFound, ResponseMessages.ErrFileNotFound);
@@ -36,13 +36,13 @@ public class FilesService : IFilesService
         return result;
     }
 
-    public async Task<ApiResponse<List<FileResDto>>> UploadFiles(string apiKey, int folderId, List<IFormFile> files)
+    public async Task<ApiResponse<List<FileResDto>>> UploadFiles(string userId, string apiKey, int folderId, List<IFormFile> files)
     {
         var app = await appRepo.GetAppByApiKeyAsync(apiKey);
         if(app == null)
             return new ApiResponse<List<FileResDto>>((int) HttpStatusCode.NotFound, ResponseMessages.ErrAppNotFound);
 
-        var result = await fileRepo.SaveFilesAsync(app.Name, folderId, files);
+        var result = await fileRepo.SaveFilesAsync(userId, app.Name, folderId, files);
         if(result == null)
             return new ApiResponse<List<FileResDto>>((int)HttpStatusCode.NotFound, ResponseMessages.ErrFolderNotFound);
 

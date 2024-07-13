@@ -17,15 +17,15 @@ public class AppsService : IAppsService
     {
         appRepo = appRepository;
     }
-    public async Task<ApiResponse<AppResDto>> AddAppAsync(AddAppReqDto dto)
+    public async Task<ApiResponse<AppResDto>> AddAppAsync(string userId, AddAppReqDto dto)
     {
-        var app = await appRepo.AddAppAsync(dto.Name, dto.Description);
+        var app = await appRepo.AddAppAsync(userId, dto.Name, dto.Description);
         return new ApiResponse<AppResDto>(app.MapToAppResDto());
     }
 
-    public async Task<ApiResponse<AppResDto>> DeleteAppAsync(int appId)
+    public async Task<ApiResponse<AppResDto>> DeleteAppAsync(string userId, int appId)
     {
-        var app = await appRepo.DeleteAppAsync(appId);
+        var app = await appRepo.DeleteAppAsync(userId, appId);
         if(app == null) 
             return new ApiResponse<AppResDto>((int) HttpStatusCode.NotFound,ResponseMessages.ErrAppNotFound);
         return new ApiResponse<AppResDto>(app.MapToAppResDto());
@@ -62,17 +62,17 @@ public class AppsService : IAppsService
         return new ApiResponse<List<FolderResDto>>(appFolders.MapToFolderResDtos());
     }
 
-    public async Task<ApiResponse<AppResDto>> RefreshAppApiKeyAsync(int appId)
+    public async Task<ApiResponse<AppResDto>> RefreshAppApiKeyAsync(string userId, int appId)
     {
-        var app = await appRepo.RefreshAppApiKeyAsync(appId);
+        var app = await appRepo.RefreshAppApiKeyAsync(userId, appId);
         if (app == null)
             return new ApiResponse<AppResDto>((int)HttpStatusCode.NotFound, ResponseMessages.ErrAppNotFound);
         return new ApiResponse<AppResDto>(app.MapToAppResDto());
     }
 
-    public async Task<ApiResponse<AppResDto>> UpdateAppAsync(int appId, UpdateAppReqDto dto)
+    public async Task<ApiResponse<AppResDto>> UpdateAppAsync(string userId, int appId, UpdateAppReqDto dto)
     {
-        var app = await appRepo.UpdateAppAsync(appId,dto.Name, dto.Description);
+        var app = await appRepo.UpdateAppAsync(userId, appId,dto.Name, dto.Description);
         if (app == null)
             return new ApiResponse<AppResDto>((int)HttpStatusCode.NotFound, ResponseMessages.ErrAppNotFound);
         return new ApiResponse<AppResDto>(app.MapToAppResDto());

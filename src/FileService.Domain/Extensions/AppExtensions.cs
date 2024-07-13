@@ -9,6 +9,7 @@ public static class AppExtensions
         var appDto = new AppResDto
         {
             Id = app.Id,
+            ApiKey = app.ApiKey,
             Name = app.Name,
             Description = app.Description
         };

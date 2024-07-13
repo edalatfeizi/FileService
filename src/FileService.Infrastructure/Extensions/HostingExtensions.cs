@@ -13,6 +13,7 @@ public static class HostingExtensions
         {
             options.UseSqlServer(connectionString);
         });
+        services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<IAppsRepository, AppsRepository>();
         services.AddScoped<IFilesRepository, FilesRepository>();
         services.AddScoped<IFoldersRepository, FoldersRepository>();

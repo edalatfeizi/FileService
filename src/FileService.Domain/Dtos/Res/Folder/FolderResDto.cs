@@ -1,7 +1,7 @@
 ﻿
 namespace FileService.Domain.Dtos.Res.Folder;
 
-public class FolderResDto
+public record FolderResDto
 {
     public int Id { get; set; }
     public string Name { get; set; }

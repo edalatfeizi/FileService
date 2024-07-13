@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FileService.Infrastructure.Migrations
 {
     [DbContext(typeof(FileServiceDbContext))]
-    [Migration("20240710182015_init")]
+    [Migration("20240713080916_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -72,7 +72,7 @@ namespace FileService.Infrastructure.Migrations
                     b.ToTable("Apps");
                 });
 
-            modelBuilder.Entity("FileService.Domain.Entities.File", b =>
+            modelBuilder.Entity("FileService.Domain.Entities.AppFile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -105,7 +105,7 @@ namespace FileService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ParentFolderId")
+                    b.Property<int?>("ParentFolderId")
                         .HasColumnType("int");
 
                     b.Property<string>("Path")
@@ -155,12 +155,51 @@ namespace FileService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ParentAppId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ParentFolderId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ParentAppId");
+
                     b.ToTable("Folders");
+                });
+
+            modelBuilder.Entity("FileService.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("AddedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JwtId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("FileService.Domain.Models.ApplicationRole", b =>
@@ -321,10 +360,12 @@ namespace FileService.Infrastructure.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -360,10 +401,12 @@ namespace FileService.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -384,15 +427,24 @@ namespace FileService.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FileService.Domain.Entities.File", b =>
+            modelBuilder.Entity("FileService.Domain.Entities.AppFile", b =>
                 {
                     b.HasOne("FileService.Domain.Entities.Folder", "Folder")
                         .WithMany("Files")
-                        .HasForeignKey("ParentFolderId")
+                        .HasForeignKey("ParentFolderId");
+
+                    b.Navigation("Folder");
+                });
+
+            modelBuilder.Entity("FileService.Domain.Entities.Folder", b =>
+                {
+                    b.HasOne("FileService.Domain.Entities.App", "App")
+                        .WithMany("Folders")
+                        .HasForeignKey("ParentAppId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Folder");
+                    b.Navigation("App");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -444,6 +496,11 @@ namespace FileService.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FileService.Domain.Entities.App", b =>
+                {
+                    b.Navigation("Folders");
                 });
 
             modelBuilder.Entity("FileService.Domain.Entities.Folder", b =>

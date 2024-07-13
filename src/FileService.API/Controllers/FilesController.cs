@@ -1,11 +1,15 @@
-﻿using FileService.Domain.Interfaces.Services;
-using Microsoft.AspNetCore.Http;
+﻿using FileService.API.Extensions;
+using FileService.Domain.Interfaces.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileService.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
     public class FilesController : ControllerBase
     {
         private readonly IFilesService filesService;
@@ -24,7 +28,7 @@ namespace FileService.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFileAsync(int id)
         {
-            var result = await filesService.DeleteFileAsync(id);
+            var result = await filesService.DeleteFileAsync(HttpContext.GetUserId().ToString(),id);
             return Ok(result);
         }
 

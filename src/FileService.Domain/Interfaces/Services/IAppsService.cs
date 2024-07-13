@@ -8,10 +8,10 @@ public interface IAppsService
 {
     Task<ApiResponse<AppResDto>> GetAppByApiKeyAsync(string apiKey);
     Task<ApiResponse<AppResDto>> GetAppByIdAsync(int appId);
-    Task<ApiResponse<AppResDto>> AddAppAsync(AddAppReqDto dto);
-    Task<ApiResponse<AppResDto>> UpdateAppAsync(int appId, UpdateAppReqDto dto);
-    Task<ApiResponse<AppResDto>> DeleteAppAsync(int appId);
-    Task<ApiResponse<AppResDto>> RefreshAppApiKeyAsync(int appId);
+    Task<ApiResponse<AppResDto>> AddAppAsync(string userId, AddAppReqDto dto);
+    Task<ApiResponse<AppResDto>> UpdateAppAsync(string userId, int appId, UpdateAppReqDto dto);
+    Task<ApiResponse<AppResDto>> DeleteAppAsync(string userId, int appId);
+    Task<ApiResponse<AppResDto>> RefreshAppApiKeyAsync(string userId, int appId);
     Task<ApiResponse<List<FolderResDto>>> GetFoldersAsync(int appId);
     Task<ApiResponse<List<AppResDto>>> GetAllAppsAsync();
 }

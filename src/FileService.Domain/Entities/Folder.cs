@@ -10,5 +10,5 @@ public class Folder : BaseEntity
     public App App { get; set; }
     [ForeignKey("App")]
     public int ParentAppId { get; set; }
-    public ICollection<File> Files { get; set; }
+    public ICollection<AppFile> Files { get; set; }
 }

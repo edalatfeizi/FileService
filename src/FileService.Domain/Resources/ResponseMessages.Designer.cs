@@ -61,6 +61,15 @@ namespace FileService.Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This email is already exist..
+        /// </summary>
+        internal static string EmailAlreadyExist {
+            get {
+                return ResourceManager.GetString("EmailAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to App not found..
         /// </summary>
         internal static string ErrAppNotFound {
@@ -84,6 +93,33 @@ namespace FileService.Domain.Resources {
         internal static string ErrFolderNotFound {
             get {
                 return ResourceManager.GetString("ErrFolderNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Token is expired..
+        /// </summary>
+        internal static string ExpiredTokens {
+            get {
+                return ResourceManager.GetString("ExpiredTokens", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid credentials..
+        /// </summary>
+        internal static string InvalidCredentials {
+            get {
+                return ResourceManager.GetString("InvalidCredentials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Token is invalid..
+        /// </summary>
+        internal static string InvalidTokens {
+            get {
+                return ResourceManager.GetString("InvalidTokens", resourceCulture);
             }
         }
     }

@@ -12,7 +12,7 @@ public class FoldersRepository : IFoldersRepository
     {
         this.dbContext = dbContext;
     }
-    public async Task<Folder> AddFolderAsync(int parentAppId, int? parentFolderId, string name, string description)
+    public async Task<Folder> AddFolderAsync(string userId, int parentAppId, int? parentFolderId, string name, string description)
     {
         var parentApp = await dbContext.Apps.FindAsync(parentAppId);
         var parentFolder = await dbContext.Folders.FindAsync(parentFolderId);
@@ -23,7 +23,12 @@ public class FoldersRepository : IFoldersRepository
             ParentAppId = parentAppId,
             ParentFolderId = parentFolderId,
             Name = name,
-            Description = description
+            Description = description,
+            CreatedBy = userId,
+            ModifiedBy = userId,
+            CreatedAt = DateTime.UtcNow,
+            ModifiedAt = DateTime.UtcNow,
+            IsActive = true
         };
 
         await dbContext.Folders.AddAsync(folder);
@@ -32,25 +37,28 @@ public class FoldersRepository : IFoldersRepository
         return folder;
     }
 
-    public async Task<Folder?> DeleteFolderAsync(int id)
+    public async Task<Folder?> DeleteFolderAsync(string userId, int id)
     {
         var folder = await dbContext.Folders.FindAsync(id);
         if (folder != null)
         {
             folder.IsActive = false;
+            folder.ModifiedBy = userId;
+            folder.ModifiedAt = DateTime.UtcNow;
+
             await dbContext.SaveChangesAsync();
 
         }
         return folder;
     }
 
-    public async Task<List<Domain.Entities.File>> GetFilesAsync(int id)
+    public async Task<List<Domain.Entities.AppFile>> GetFilesAsync(int id)
     {
         var folder = await dbContext.Folders.Where(x => x.Id == id && x.IsActive).Include(x => x.Files).FirstOrDefaultAsync();
         if (folder != null)
             return folder.Files.ToList();
 
-        return new List<Domain.Entities.File>();
+        return new List<Domain.Entities.AppFile>();
     }
 
     public async Task<Folder?> GetFolderByIdAsync(int id)
@@ -59,13 +67,16 @@ public class FoldersRepository : IFoldersRepository
         return folder;
     }
 
-    public async Task<Folder?> UpdateFolderAsync(int id, string name, string description)
+    public async Task<Folder?> UpdateFolderAsync(string userId, int folderId, string name, string description)
     {
-        var folder = await dbContext.Folders.FindAsync(id);
+        var folder = await dbContext.Folders.FindAsync(folderId);
         if (folder != null)
         {
             folder.Name = name;
             folder.Description = description;
+            folder.ModifiedBy = userId;
+            folder.ModifiedAt = DateTime.UtcNow;
+
             await dbContext.SaveChangesAsync();
 
         }

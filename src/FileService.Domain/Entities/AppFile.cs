@@ -1,7 +1,7 @@
 ﻿
 namespace FileService.Domain.Entities;
 
-public class File : BaseEntity
+public class AppFile : BaseEntity
 {
     public string Name { get; set; }
     public string ContentType { get; set; }

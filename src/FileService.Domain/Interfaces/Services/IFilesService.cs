@@ -5,7 +5,7 @@ namespace FileService.Domain.Interfaces.Services;
 
 public interface IFilesService
 {
-    Task<ApiResponse<List<FileResDto>>> UploadFiles(string apiKey,int folderId, List<IFormFile> files);
+    Task<ApiResponse<List<FileResDto>>> UploadFiles(string userId,string apiKey,int folderId, List<IFormFile> files);
     Task<(byte[], string, string)?> DownloadFileAsync(int fileId);
-    Task<ApiResponse<DeleteFIleResDto>> DeleteFileAsync(int fileId);
+    Task<ApiResponse<DeleteFIleResDto>> DeleteFileAsync(string userId,int fileId);
 }

@@ -20,7 +20,7 @@ public class FoldersService : IFoldersService
         appRepo = appRepository;
     }
 
-    public async Task<ApiResponse<FolderResDto>> AddFolderAsync(string apiKey, AddFolderReqDto dto)
+    public async Task<ApiResponse<FolderResDto>> AddFolderAsync(string userId, string apiKey, AddFolderReqDto dto)
     {
         var parentApp = await appRepo.GetAppByApiKeyAsync(apiKey);
         int parentFolderId = 0;
@@ -35,13 +35,13 @@ public class FoldersService : IFoldersService
                 return new ApiResponse<FolderResDto>((int) HttpStatusCode.NotFound, ResponseMessages.ErrFolderNotFound);
         }
 
-        var folder = await folderRepo.AddFolderAsync(parentApp.Id, parentFolderId, dto.Name, dto.Description);
+        var folder = await folderRepo.AddFolderAsync(userId, parentApp.Id, parentFolderId, dto.Name, dto.Description);
         return new ApiResponse<FolderResDto>(folder.MapToFolderResDto());
     }
 
-    public async Task<ApiResponse<FolderResDto>> DeleteFolderAsync(int id)
+    public async Task<ApiResponse<FolderResDto>> DeleteFolderAsync(string userId, int folderId)
     {
-        var result = await folderRepo.DeleteFolderAsync(id);
+        var result = await folderRepo.DeleteFolderAsync(userId, folderId);
         if(result == null)
             return new ApiResponse<FolderResDto>((int)HttpStatusCode.NotFound, ResponseMessages.ErrFolderNotFound);
         return new ApiResponse<FolderResDto>(result.MapToFolderResDto());
@@ -64,9 +64,9 @@ public class FoldersService : IFoldersService
         return new ApiResponse<FolderResDto>(result.MapToFolderResDto());
     }
 
-    public async Task<ApiResponse<FolderResDto>> UpdateFolderAsync(int id, UpdateFolderReqDto dto)
+    public async Task<ApiResponse<FolderResDto>> UpdateFolderAsync(string userId, int folderId, UpdateFolderReqDto dto)
     {
-        var result = await folderRepo.UpdateFolderAsync(id,dto.Name,dto.Description);
+        var result = await folderRepo.UpdateFolderAsync(userId, folderId,dto.Name,dto.Description);
         if (result == null)
             return new ApiResponse<FolderResDto>((int)HttpStatusCode.NotFound, ResponseMessages.ErrFolderNotFound);
         return new ApiResponse<FolderResDto>(result.MapToFolderResDto());

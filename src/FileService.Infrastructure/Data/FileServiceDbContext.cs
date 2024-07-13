@@ -18,5 +18,6 @@ public class FileServiceDbContext : IdentityDbContext<ApplicationUser,Applicatio
 
     public DbSet<App> Apps { get; set; }
     public DbSet<Folder> Folders { get; set; }
-    public DbSet<Domain.Entities.File> Files { get; set; }
+    public DbSet<AppFile> Files { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 }

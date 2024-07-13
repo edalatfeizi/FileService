@@ -1,4 +1,5 @@
 ﻿
+using FileService.Domain.Entities;
 using FileService.Infrastructure.Common;
 using FileService.Infrastructure.Data;
 using Microsoft.AspNetCore.StaticFiles;
@@ -13,10 +14,10 @@ public class FilesRepository : IFilesRepository
     {
         this.dbContext = dbContext;
     }
-    public async Task<List<Domain.Entities.File>?> SaveFilesAsync(string appName, int folderId, List<IFormFile> files)
+    public async Task<List<AppFile>?> SaveFilesAsync(string userId, string appName, int folderId, List<IFormFile> files)
     {
 
-        var newFiles = new List<Domain.Entities.File>();
+        var newFiles = new List<AppFile>();
         var folder = await dbContext.Folders.Where(x => x.Id == folderId && x.IsActive).FirstOrDefaultAsync();
         if (folder == null)
             return null;
@@ -31,14 +32,19 @@ public class FilesRepository : IFilesRepository
             {
                 await file.CopyToAsync(stream);
             }
-            var newFile = new Domain.Entities.File
+            var newFile = new AppFile
             {
                 Name = file.FileName,
                 ContentType = file.ContentType,
                 Size = file.Length,
                 ParentFolderId = folder!.Id,
                 Folder = folder,
-                Path = filePath
+                Path = filePath,
+                CreatedBy = userId,
+                ModifiedBy = userId,
+                CreatedAt = DateTime.UtcNow,
+                ModifiedAt = DateTime.UtcNow,
+                IsActive = true
             };
             newFiles.Add(newFile);
         }
@@ -64,7 +70,7 @@ public class FilesRepository : IFilesRepository
 
     }
 
-    public async Task<(bool, string)?> DeleteFileAsync(int fileId)
+    public async Task<(bool, string)?> DeleteFileAsync(string userId, int fileId)
     {
 
         try
@@ -72,7 +78,11 @@ public class FilesRepository : IFilesRepository
             var file = await dbContext.Files.Where(x => x.Id == fileId && x.IsActive).FirstOrDefaultAsync();
             if (file == null)
                 return null;
+            
             file.IsActive = false;
+            file.ModifiedBy = userId;
+            file.ModifiedAt = DateTime.UtcNow;
+
             File.Delete(file.Path);
             await dbContext.SaveChangesAsync();
             return (true, "");
