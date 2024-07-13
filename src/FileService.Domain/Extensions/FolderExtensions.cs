@@ -11,7 +11,8 @@ public static class FolderExtensions
         {
             Id = folder.Id,
             Name = folder.Name,
-            Description = folder.Description
+            Description = folder.Description,
+            ParentFolderId = folder.ParentFolderId ?? 0
         };
 
         return folderDto; 

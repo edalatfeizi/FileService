@@ -14,11 +14,11 @@ public class FilesRepository : IFilesRepository
     {
         this.dbContext = dbContext;
     }
-    public async Task<List<AppFile>?> SaveFilesAsync(string userId, string appName, int folderId, List<IFormFile> files)
+    public async Task<List<AppFile>?> SaveFilesAsync(int folderId, List<IFormFile> files)
     {
 
         var newFiles = new List<AppFile>();
-        var folder = await dbContext.Folders.Where(x => x.Id == folderId && x.IsActive).FirstOrDefaultAsync();
+        var folder = await dbContext.Folders.Where(x => x.Id == folderId && x.IsActive).Include(x=> x.App).ThenInclude(x=> x.User).FirstOrDefaultAsync();
         if (folder == null)
             return null;
         foreach (var file in files)
@@ -26,7 +26,7 @@ public class FilesRepository : IFilesRepository
 
             var fileInfo = new FileInfo(file.FileName);
             var fileName = $"{DateTime.UtcNow.Ticks}{fileInfo.Extension}";
-            var filePath = $@"{FileCommons.GetDirectoryPath(appName, folder.Name)}\{fileName}";
+            var filePath = $@"{FileCommons.GetDirectoryPath(folder.App.Name, folder.Name)}\{fileName}";
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
@@ -34,14 +34,14 @@ public class FilesRepository : IFilesRepository
             }
             var newFile = new AppFile
             {
-                Name = file.FileName,
+                Name = fileName,
                 ContentType = file.ContentType,
                 Size = file.Length,
                 ParentFolderId = folder!.Id,
                 Folder = folder,
                 Path = filePath,
-                CreatedBy = userId,
-                ModifiedBy = userId,
+                CreatedBy = folder.App.UserId.ToString(),
+                ModifiedBy = folder.App.UserId.ToString(),
                 CreatedAt = DateTime.UtcNow,
                 ModifiedAt = DateTime.UtcNow,
                 IsActive = true

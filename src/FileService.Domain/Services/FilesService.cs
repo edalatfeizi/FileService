@@ -36,13 +36,13 @@ public class FilesService : IFilesService
         return result;
     }
 
-    public async Task<ApiResponse<List<FileResDto>>> UploadFiles(string userId, string apiKey, int folderId, List<IFormFile> files)
+    public async Task<ApiResponse<List<FileResDto>>> UploadFiles( int folderId, List<IFormFile> files)
     {
-        var app = await appRepo.GetAppByApiKeyAsync(apiKey);
-        if(app == null)
-            return new ApiResponse<List<FileResDto>>((int) HttpStatusCode.NotFound, ResponseMessages.ErrAppNotFound);
+        //var app = await appRepo.GetAppByApiKeyAsync(apiKey);
+        //if(app == null)
+        //    return new ApiResponse<List<FileResDto>>((int) HttpStatusCode.NotFound, ResponseMessages.ErrAppNotFound);
 
-        var result = await fileRepo.SaveFilesAsync(userId, app.Name, folderId, files);
+        var result = await fileRepo.SaveFilesAsync(folderId, files);
         if(result == null)
             return new ApiResponse<List<FileResDto>>((int)HttpStatusCode.NotFound, ResponseMessages.ErrFolderNotFound);
 

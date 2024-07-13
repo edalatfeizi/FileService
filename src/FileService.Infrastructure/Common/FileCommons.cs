@@ -10,7 +10,7 @@ public static class FileCommons
     }
     public static string GetDirectoryPath(string appName, string folderName)
     {
-        var result = Path.Combine($@"D:\Data\{appName}\{folderName}");
+        var result = Path.Combine($@"E:\Data\{appName}\{folderName}");
         if (!Directory.Exists(result))
         {
             Directory.CreateDirectory(result);

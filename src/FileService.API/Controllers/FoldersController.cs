@@ -1,7 +1,5 @@
 ﻿using FileService.API.Extensions;
 using FileService.Domain.Dtos.Req.Folder;
-using FileService.Domain.Dtos.Res.App;
-using FileService.Domain.DTOs;
 using FileService.Domain.Filters;
 using FileService.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,11 +13,13 @@ namespace FileService.API.Controllers
     public class FoldersController : ControllerBase
     {
         private readonly IFoldersService folderService;
+        private readonly IFilesService fileService;
         private readonly IAppsService appsService;
-        public FoldersController(IFoldersService folderService, IAppsService appsService)
+        public FoldersController(IFoldersService folderService,IFilesService filesService, IAppsService appsService)
         {
             this.folderService = folderService;
             this.appsService = appsService;
+            this.fileService = filesService;
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
@@ -65,5 +65,12 @@ namespace FileService.API.Controllers
             return Ok(result);
         }
 
+        [HttpPost("{id}/files")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> UploadFilesAsync(int id, [FromForm] List<IFormFile> files)
+        {
+            var result = await fileService.UploadFiles(id, files);
+            return Ok(result);
+        }
     }
 }
