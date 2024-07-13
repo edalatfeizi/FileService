@@ -1,5 +1,6 @@
 ﻿
 using FileService.Domain.Entities;
+using FileService.Domain.Models;
 using FileService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,6 +51,12 @@ public class AppsRepository : IAppsRepository
         return apps;
     }
 
+    public App? GetAppByApiKey(string apiKey)
+    {
+        var app =  dbContext.Apps.Where(x => x.ApiKey == apiKey && x.IsActive).FirstOrDefault();
+        return app;
+    }
+
     public async Task<App?> GetAppByApiKeyAsync(string apiKey)
     {
         var app = await dbContext.Apps.Where(x => x.ApiKey == apiKey && x.IsActive).FirstOrDefaultAsync();
@@ -60,6 +67,13 @@ public class AppsRepository : IAppsRepository
     {
         var app = await dbContext.Apps.Where(x => x.Id == appId && x.IsActive).FirstOrDefaultAsync();
         return app;
+    }
+
+    public async Task<ApplicationUser?> GetAppUserByApiKeyAsync(string apiKey)
+    {
+        var app = await dbContext.Apps.Where(x => x.ApiKey == apiKey && x.IsActive).Include(x=> x.User).FirstOrDefaultAsync();
+
+        return app != null ? app.User : null;
     }
 
     public async Task<List<Folder>?> GetFoldersAsync(int appId)

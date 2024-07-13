@@ -1,6 +1,8 @@
 ﻿using FileService.API.Extensions;
 using FileService.Domain.Dtos.Req.App;
+using FileService.Domain.Dtos.Req.Folder;
 using FileService.Domain.Interfaces.Services;
+using FileService.Domain.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +15,11 @@ namespace FileService.API.Controllers
     public class AppsController : ControllerBase
     {
         private readonly IAppsService appService;
-        public AppsController(IAppsService appService)
+        private readonly IFoldersService foldersService;
+        public AppsController(IAppsService appService, IFoldersService foldersService)
         {
             this.appService = appService;
+            this.foldersService = foldersService;
         }
 
         [HttpGet("{id}")]
@@ -54,6 +58,13 @@ namespace FileService.API.Controllers
         public async Task<IActionResult> GetAppFolders(int id)
         {
             var result = await appService.GetFoldersAsync(id);
+            return Ok(result);
+        }
+        [HttpPost("{id}/folder")]
+        public async Task<IActionResult> AddFolderAsync(int id,[FromBody] AddFolderReqDto addFolderDto)
+        {
+            var result = await foldersService.AddFolderAsync(HttpContext.GetUserId().ToString(), id, addFolderDto);
+
             return Ok(result);
         }
     }

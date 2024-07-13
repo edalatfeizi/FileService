@@ -14,4 +14,5 @@ public interface IAppsService
     Task<ApiResponse<AppResDto>> RefreshAppApiKeyAsync(string userId, int appId);
     Task<ApiResponse<List<FolderResDto>>> GetFoldersAsync(int appId);
     Task<ApiResponse<List<AppResDto>>> GetAllAppsAsync();
+    Task<ApiResponse<string>> GetAppOwnerIdAsync(string apiKey);
 }

@@ -1,5 +1,8 @@
 ﻿using FileService.API.Extensions;
 using FileService.Domain.Dtos.Req.Folder;
+using FileService.Domain.Dtos.Res.App;
+using FileService.Domain.DTOs;
+using FileService.Domain.Filters;
 using FileService.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -9,15 +12,16 @@ namespace FileService.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class FoldersController : ControllerBase
     {
         private readonly IFoldersService folderService;
-        public FoldersController(IFoldersService folderService)
+        private readonly IAppsService appsService;
+        public FoldersController(IFoldersService folderService, IAppsService appsService)
         {
             this.folderService = folderService;
+            this.appsService = appsService;
         }
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFolderByIdAsync(int id)
         {
@@ -25,18 +29,27 @@ namespace FileService.API.Controllers
             return Ok(result);
         }
         [HttpPost]
+        [AuthorizeApiKey]
         public async Task<IActionResult> AddFolderAsync([FromBody] AddFolderReqDto addFolderDto)
         {
-            var result = await folderService.AddFolderAsync(HttpContext.GetUserId().ToString(), HttpContext.GetApiKey(), addFolderDto);
+            var app = await appsService.GetAppByApiKeyAsync(HttpContext.GetApiKey());
+            if(!app.Succeed)
+                return Ok(app);
+            var appUserId = await appsService.GetAppOwnerIdAsync(HttpContext.GetApiKey());
+            var result = await folderService.AddFolderAsync(appUserId.Data!, app.Data!.Id, addFolderDto);
             return Ok(result);
         }
         [HttpPut("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
         public async Task<IActionResult> UpdateFolderAsync(int id, [FromBody] UpdateFolderReqDto updateFolderDto)
         {
             var result = await folderService.UpdateFolderAsync(HttpContext.GetUserId().ToString(),id, updateFolderDto);
             return Ok(result);
         }
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
         public async Task<IActionResult> DeleteFolderAsync(int id)
         {
             var result = await folderService.DeleteFolderAsync(HttpContext.GetUserId().ToString(),id);
@@ -44,6 +57,8 @@ namespace FileService.API.Controllers
         }
 
         [HttpGet("{id}/files")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
         public async Task<IActionResult> GetFilesAsync(int id)
         {
             var result = await folderService.GetFilesAsync(id);

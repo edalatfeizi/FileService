@@ -7,7 +7,7 @@ namespace FileService.Domain.Interfaces.Services;
 
 public interface IFoldersService
 {
-    Task<ApiResponse<FolderResDto>> AddFolderAsync(string userId, string apiKey, AddFolderReqDto dto);
+    Task<ApiResponse<FolderResDto>> AddFolderAsync(string userId, int appId, AddFolderReqDto dto);
     Task<ApiResponse<FolderResDto>> UpdateFolderAsync(string userId, int folderId, UpdateFolderReqDto dto);
     Task<ApiResponse<FolderResDto>> DeleteFolderAsync(string userId, int folderId);
     Task<ApiResponse<FolderResDto>> GetFolderByIdAsync(int folderId);

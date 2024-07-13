@@ -52,13 +52,13 @@ public class FoldersRepository : IFoldersRepository
         return folder;
     }
 
-    public async Task<List<Domain.Entities.AppFile>> GetFilesAsync(int id)
+    public async Task<List<AppFile>> GetFilesAsync(int id)
     {
         var folder = await dbContext.Folders.Where(x => x.Id == id && x.IsActive).Include(x => x.Files).FirstOrDefaultAsync();
         if (folder != null)
             return folder.Files.ToList();
 
-        return new List<Domain.Entities.AppFile>();
+        return new List<AppFile>();
     }
 
     public async Task<Folder?> GetFolderByIdAsync(int id)

@@ -53,6 +53,16 @@ public class AppsService : IAppsService
         return new ApiResponse<AppResDto>(app.MapToAppResDto());
     }
 
+    public async Task<ApiResponse<string?>> GetAppOwnerIdAsync(string apiKey)
+    {
+        var appUser = await appRepo.GetAppUserByApiKeyAsync(apiKey);
+
+        if(appUser == null)
+            return new ApiResponse<string?>((int) HttpStatusCode.NotFound, ResponseMessages.ErrAppNotFound, null);
+
+        return new ApiResponse<string?>(appUser.Id.ToString());
+    }
+
     public async Task<ApiResponse<List<FolderResDto>>> GetFoldersAsync(int appId)
     {
         var appFolders = await appRepo.GetFoldersAsync(appId);
