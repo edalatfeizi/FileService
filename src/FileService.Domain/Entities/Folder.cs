@@ -5,6 +5,7 @@ public class Folder : BaseEntity
 {
     public string  Name { get; set; }
     public string  Description { get; set; }
+    public string Path { get; set; }
     public int? ParentFolderId { get; set; }
 
     public App App { get; set; }

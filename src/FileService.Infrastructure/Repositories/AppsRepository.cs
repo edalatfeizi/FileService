@@ -69,6 +69,12 @@ public class AppsRepository : IAppsRepository
         return app;
     }
 
+    public async Task<App?> GetAppByNameAsync(string name)
+    {
+        var app = await dbContext.Apps.Where(x => x.Name == name && x.IsActive).FirstOrDefaultAsync();
+        return app;
+    }
+
     public async Task<ApplicationUser?> GetAppUserByApiKeyAsync(string apiKey)
     {
         var app = await dbContext.Apps.Where(x => x.ApiKey == apiKey && x.IsActive).Include(x=> x.User).FirstOrDefaultAsync();

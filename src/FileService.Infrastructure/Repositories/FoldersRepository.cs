@@ -1,5 +1,6 @@
 ﻿
 using FileService.Domain.Entities;
+using FileService.Infrastructure.Common;
 using FileService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,27 +15,47 @@ public class FoldersRepository : IFoldersRepository
     }
     public async Task<Folder> AddFolderAsync(string userId, int parentAppId, int? parentFolderId, string name, string description)
     {
-        var parentApp = await dbContext.Apps.FindAsync(parentAppId);
+        var parentApp = await dbContext.Apps.Where(x=> x.Id == parentAppId && x.IsActive).Include(x=> x.Folders).FirstOrDefaultAsync();
         var parentFolder = await dbContext.Folders.FindAsync(parentFolderId);
-
-        var folder = new Folder
+        var folderPath = "";
+        if(parentFolder != null)
         {
-            App = parentApp!,
-            ParentAppId = parentAppId,
-            ParentFolderId = parentFolderId,
-            Name = name,
-            Description = description,
-            CreatedBy = userId,
-            ModifiedBy = userId,
-            CreatedAt = DateTime.UtcNow,
-            ModifiedAt = DateTime.UtcNow,
-            IsActive = true
-        };
+            folderPath = FileCommons.CreateDirectory($@"{parentFolder.Path}\{name}");
 
-        await dbContext.Folders.AddAsync(folder);
-        await dbContext.SaveChangesAsync();
+        }
+        else if (parentApp!.Folders.Count > 0)
+        {
+            folderPath = FileCommons.CreateDirectory($@"{FileCommons.GetBasePath()}\{parentApp!.Name}\{name}");
+        }
+        else
+        {
+            folderPath = FileCommons.CreateDirectory($@"{FileCommons.GetBasePath()}\{name}");
 
-        return folder;
+        }
+        var existFolder = await dbContext.Folders.Where(x=> x.Path == folderPath && x.IsActive).FirstOrDefaultAsync();
+        if(existFolder == null)
+        {
+            var folder = new Folder
+            {
+                App = parentApp!,
+                ParentAppId = parentAppId,
+                ParentFolderId = parentFolderId,
+                Name = name,
+                Description = description,
+                CreatedBy = userId,
+                ModifiedBy = userId,
+                CreatedAt = DateTime.UtcNow,
+                ModifiedAt = DateTime.UtcNow,
+                Path = folderPath,
+                IsActive = true
+            };
+            await dbContext.Folders.AddAsync(folder);
+            await dbContext.SaveChangesAsync();
+            return folder;
+        }
+ 
+
+        return existFolder;
     }
 
     public async Task<Folder?> DeleteFolderAsync(string userId, int id)
@@ -42,6 +63,24 @@ public class FoldersRepository : IFoldersRepository
         var folder = await dbContext.Folders.FindAsync(id);
         if (folder != null)
         {
+
+            string[] allfilePaths = Directory.GetFiles(folder.Path, "*.*", SearchOption.AllDirectories);
+            foreach (var filePath in allfilePaths)
+            {
+                filePath.Replace(@"\\", @"\");
+                var file = await dbContext.Files.Where(x => x.Path == filePath && x.IsActive).FirstOrDefaultAsync();
+                if(file != null)
+                {
+                    file.IsActive = false;
+                    file.ModifiedBy = userId;
+                    file.ModifiedAt = DateTime.UtcNow;
+                }
+            }
+
+            var dir = new DirectoryInfo(folder.Path);
+
+            dir.Delete(true);
+
             folder.IsActive = false;
             folder.ModifiedBy = userId;
             folder.ModifiedAt = DateTime.UtcNow;

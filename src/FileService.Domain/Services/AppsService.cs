@@ -13,13 +13,22 @@ namespace FileService.Domain.Services;
 public class AppsService : IAppsService
 {
     private readonly IAppsRepository appRepo;
-    public AppsService(IAppsRepository appRepository)
+    private readonly IFoldersRepository foldersRepo;
+    public AppsService(IAppsRepository appRepository, IFoldersRepository foldersRepo)
     {
         appRepo = appRepository;
+        this.foldersRepo = foldersRepo;
     }
     public async Task<ApiResponse<AppResDto>> AddAppAsync(string userId, AddAppReqDto dto)
     {
+        var existApp = await appRepo.GetAppByNameAsync(dto.Name);
+        if(existApp != null)
+            return new ApiResponse<AppResDto>((int) HttpStatusCode.Conflict,ResponseMessages.ErrDuplicateAppName);
+
         var app = await appRepo.AddAppAsync(userId, dto.Name, dto.Description);
+
+        var appFolder = await foldersRepo.AddFolderAsync(userId,app.Id,null,app.Name,dto.Description);
+
         return new ApiResponse<AppResDto>(app.MapToAppResDto());
     }
 

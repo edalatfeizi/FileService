@@ -79,6 +79,15 @@ namespace FileService.Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is already an app with the same name..
+        /// </summary>
+        internal static string ErrDuplicateAppName {
+            get {
+                return ResourceManager.GetString("ErrDuplicateAppName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File not found..
         /// </summary>
         internal static string ErrFileNotFound {

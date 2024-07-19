@@ -123,6 +123,9 @@
   <data name="ErrAppNotFound" xml:space="preserve">
     <value>App not found.</value>
   </data>
+  <data name="ErrDuplicateAppName" xml:space="preserve">
+    <value>There is already an app with the same name.</value>
+  </data>
   <data name="ErrFileNotFound" xml:space="preserve">
     <value>File not found.</value>
   </data>

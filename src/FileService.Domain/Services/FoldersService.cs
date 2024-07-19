@@ -23,7 +23,6 @@ public class FoldersService : IFoldersService
     public async Task<ApiResponse<FolderResDto>> AddFolderAsync(string userId, int appId, AddFolderReqDto dto)
     {
         var parentApp = await appRepo.GetAppByIdAsync(appId);
-        int parentFolderId = 0;
         if (parentApp == null)
             return new ApiResponse<FolderResDto>((int)HttpStatusCode.NotFound, ResponseMessages.ErrAppNotFound);
         
@@ -35,7 +34,7 @@ public class FoldersService : IFoldersService
                 return new ApiResponse<FolderResDto>((int) HttpStatusCode.NotFound, ResponseMessages.ErrFolderNotFound);
         }
 
-        var folder = await folderRepo.AddFolderAsync(userId, parentApp.Id, parentFolderId, dto.Name, dto.Description);
+        var folder = await folderRepo.AddFolderAsync(userId, parentApp.Id, dto.ParentFolderId, dto.Name, dto.Description);
         return new ApiResponse<FolderResDto>(folder.MapToFolderResDto());
     }
 
