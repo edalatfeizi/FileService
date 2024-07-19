@@ -37,6 +37,9 @@ public class AppsService : IAppsService
         var app = await appRepo.DeleteAppAsync(userId, appId);
         if(app == null) 
             return new ApiResponse<AppResDto>((int) HttpStatusCode.NotFound,ResponseMessages.ErrAppNotFound);
+
+        var rootFolderId = app.Folders.OrderBy(x => x.CreatedAt).First().Id;
+        var folder = await foldersRepo.DeleteFolderAsync(userId,rootFolderId );
         return new ApiResponse<AppResDto>(app.MapToAppResDto());
     }
 

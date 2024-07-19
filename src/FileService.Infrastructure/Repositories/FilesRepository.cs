@@ -26,7 +26,6 @@ public class FilesRepository : IFilesRepository
 
             var fileInfo = new FileInfo(file.FileName);
             var fileName = $"{DateTime.UtcNow.Ticks}{fileInfo.Extension}";
-            //var filePath = $@"{FileCommons.GetDirectoryPath(folder.App.Name, folder.Name)}\{fileName}";
             var filePath = @$"{folder.Path}\{fileName}";
 
             using (var stream = new FileStream(filePath, FileMode.Create))

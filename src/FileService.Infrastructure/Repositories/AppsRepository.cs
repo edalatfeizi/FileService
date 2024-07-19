@@ -33,15 +33,23 @@ public class AppsRepository : IAppsRepository
 
     public async Task<App?> DeleteAppAsync(string userId, int appId)
     {
-        var app = await dbContext.Apps.Where(x => x.Id == appId && x.IsActive).FirstOrDefaultAsync();
+        var app = await dbContext.Apps.Where(x => x.Id == appId && x.IsActive).Include(x=> x.Folders).FirstOrDefaultAsync();
         if (app != null)
         {
             app.IsActive = false;
             app.ModifiedAt = DateTime.UtcNow;
             app.ModifiedBy = userId;
+
+            foreach (var folder in app.Folders)
+            {
+                folder.IsActive = false;
+                folder.ModifiedAt = DateTime.UtcNow;
+                folder.ModifiedBy = userId;
+            }
+
             await dbContext.SaveChangesAsync();
+
         }
-       
         return app;
     }
 
