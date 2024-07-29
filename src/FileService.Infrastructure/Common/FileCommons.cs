@@ -30,7 +30,10 @@ public static class FileCommons
         }
         return path;
     }
-
+    public static void RenameDirectory(string sourcePath,string destinationPath)
+    {
+        Directory.Move(sourcePath, destinationPath);
+    }
     public static string GetFilePath(string appName, string folderName, string fileName)
     {
         var result = Path.Combine(GetDirectoryPath(appName,folderName), fileName);

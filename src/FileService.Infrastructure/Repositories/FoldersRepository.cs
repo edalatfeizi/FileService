@@ -93,7 +93,7 @@ public class FoldersRepository : IFoldersRepository
 
     public async Task<List<AppFile>> GetFilesAsync(int id)
     {
-        var folder = await dbContext.Folders.Where(x => x.Id == id && x.IsActive).Include(x => x.Files).FirstOrDefaultAsync();
+        var folder = await dbContext.Folders.Where(x => x.Id == id && x.IsActive).Include(x => x.Files.Where(x=> x.IsActive)).FirstOrDefaultAsync();
         if (folder != null)
             return folder.Files.ToList();
 
@@ -111,11 +111,16 @@ public class FoldersRepository : IFoldersRepository
         var folder = await dbContext.Folders.FindAsync(folderId);
         if (folder != null)
         {
+            var lastName = folder.Name;
             folder.Name = name;
             folder.Description = description;
             folder.ModifiedBy = userId;
             folder.ModifiedAt = DateTime.UtcNow;
 
+            var newPath = $"{folder.Path.Substring(0, folder.Path.Length - lastName.Length)}{name}";
+            FileCommons.RenameDirectory(folder.Path, newPath);
+
+            folder.Path = newPath;
             await dbContext.SaveChangesAsync();
 
         }

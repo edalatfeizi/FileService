@@ -55,7 +55,7 @@ public class AppsRepository : IAppsRepository
 
     public async Task<List<App>> GetAllAppsAsync()
     {
-        var apps = await dbContext.Apps.ToListAsync();
+        var apps = await dbContext.Apps.Where(x=> x.IsActive).ToListAsync();
         return apps;
     }
 

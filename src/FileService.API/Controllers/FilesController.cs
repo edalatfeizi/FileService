@@ -22,7 +22,7 @@ namespace FileService.API.Controllers
         public async Task<IActionResult> DownloadFileAsync(int id)
         {
             var result = await filesService.DownloadFileAsync(id);
-            return Ok(result);
+            return File(result?.Item1, result?.Item2, result?.Item3);
         }
 
         [HttpDelete("{id}")]
